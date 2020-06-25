@@ -21,6 +21,12 @@
 <!--[if IE 9 ]>    <html class="ie9"> <![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--> <html lang="${response.locale.language}"><!--<![endif]-->
 <head>
+
+    <script>
+        // partial fix for conflict between vue and prototype 1.7.0
+        window.filter = Array.prototype.filter
+    </script>
+
     <g:if test="${Environment.isDevelopmentEnvironmentAvailable()}">
         <asset:javascript src="vue.js"/>
     </g:if>

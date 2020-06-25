@@ -129,6 +129,17 @@
         </g:else>
 
 </g:elseif>
+<g:elseif test="${prop.renderingOptions?.(StringRenderingConstants.DISPLAY_TYPE_KEY) in [StringRenderingConstants.DisplayType.DYNAMIC_FORM, 'DYNAMIC_FORM']}">
+    <g:set var="fieldid" value="${g.rkey()}"/>
+    <g:set var="hasDynamicProperties" value="${dynamicProperties ? true: false}"/>
+    <g:set var="valueText" value="${values&&null!=values[prop.name]?values[prop.name]:prop.defaultValue}"/>
+
+    <g:hiddenField id="${fieldid}" name="${fieldname}" value="${valueText}" />
+
+    <div id="dynamic-form-vue" fields="${valueText}" hasOptions="${hasDynamicProperties}"
+         options="${hasDynamicProperties? dynamicProperties.encodeAsJSON(): null}"
+         element="${fieldid}"></div>
+</g:elseif>
 <g:elseif test="${prop.type.toString()=='Select' || prop.type.toString()=='FreeSelect'}">
     <g:set var="fieldid" value="${g.rkey()}"/>
     <label class="${labelColType}   ${prop.required ? 'required' : ''}"

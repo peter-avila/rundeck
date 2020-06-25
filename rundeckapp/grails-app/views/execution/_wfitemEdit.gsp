@@ -15,6 +15,8 @@
   --}%
 
 <%@ page import="rundeck.User; com.dtolabs.rundeck.core.plugins.configuration.PropertyScope; rundeck.PluginStep; rundeck.CommandExec; rundeck.JobExec" %>
+<asset:javascript src="static/pages/dynamic-form.js" defer="defer"/>
+
 <%--
     _wfitemEdit.gsp
 
@@ -665,7 +667,7 @@
                 <g:hiddenField name="newitemnodestep" value="${isNodeStep}"/>
 
 
-                <div>
+                <div id="pluginConfigForm">
                     <g:set var="pluginprefix" value="pluginConfig."/>
                     <g:render template="/framework/pluginConfigPropertiesInputs" model="${[
                             extraInputCss: 'context_var_autocomplete',

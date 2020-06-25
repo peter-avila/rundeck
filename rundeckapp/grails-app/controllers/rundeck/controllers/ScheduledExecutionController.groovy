@@ -1833,14 +1833,12 @@ class ScheduledExecutionController  extends ControllerBase{
 
         def crontab = scheduledExecution.timeAndDateAsBooleanMap()
 
-        AuthContext auth = frameworkService.getAuthContextForSubject(request.subject)
-
         def notificationPlugins = notificationService.listNotificationPlugins().findAll{k,v->
             !pluginControlService?.isDisabledPlugin(k,'Notification')
         }
 
         def notificationPluginsDynamicProperties = notificationService.listNotificationPluginsDynamicProperties(scheduledExecution.project,
-                rundeckAuthorizedServicesProvider.getServicesWith(auth)).findAll{k,v->
+                rundeckAuthorizedServicesProvider.getServicesWith(authContext)).findAll{k,v->
             !pluginControlService?.isDisabledPlugin(k,'Notification')
         }
 
@@ -2215,10 +2213,11 @@ class ScheduledExecutionController  extends ControllerBase{
             !pluginControlService?.isDisabledPlugin(k, 'Notification')
         }
 
-        AuthContext auth = frameworkService.getAuthContextForSubject(request.subject)
-
-        def notificationPluginsDynamicProperties = notificationService.listNotificationPluginsDynamicProperties(scheduledExecution.project,
-                rundeckAuthorizedServicesProvider.getServicesWith(auth)).findAll{k,v->
+        def service = rundeckAuthorizedServicesProvider.getServicesWith(authContext)
+        def notificationPluginsDynamicProperties = notificationService.listNotificationPluginsDynamicProperties(
+                scheduledExecution.project,
+                service
+        ).findAll{k,v->
             !pluginControlService?.isDisabledPlugin(k,'Notification')
         }
 

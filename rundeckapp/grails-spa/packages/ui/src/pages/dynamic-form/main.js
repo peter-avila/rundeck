@@ -42,12 +42,11 @@ const i18n = new VueI18n({
   messages // set locale messages,
 
 })
-import DynamicFormPluginProp from "@rundeck/ui-trellis/lib/components/plugins/DynamicFormPluginProp";
 
-var el = document.getElementById('dynamic-form-vue');
+const els = document.body.getElementsByClassName('dynamic-form-vue')
 
-if (el != null) {
-
+for (var i = 0; i < els.length; i++) {
+  const el = els[i];
   // partial fix for conflict between vue and prototype 1.7.0
   Array.prototype.filter = window.filter
 
@@ -61,9 +60,11 @@ if (el != null) {
           options: this.$el.attributes.options.value,
           hasOptions: this.$el.attributes.hasOptions.value,
           element: this.$el.attributes.element.value,
+          name: this.$el.attributes.name.value,
         }
       })
-    }
-  })
-
+    },
+    i18n
+  });
 }
+

@@ -10,47 +10,68 @@
                     <input  v-model="field.value" type="text" :class="['form-control','input-sm','context_var_autocomplete']" size="100" @change="changeField(field)" >
                 </div>
                 <div class="col-sm-1">
-                <span class="btn btn-xs btn-default " @click="removeField(field)" title="Delete this step">
+                <span class="btn btn-xs btn-default " @click="removeField(field)" :title="$t('message.delete')">
                 <i class="glyphicon glyphicon-remove"></i></span>
 
+                </div>
+                <div class="col-sm-10 col-sm-offset-2 help-block" v-if="field.desc">
+                    <div class="help-block">{{field.desc}}</div>
                 </div>
             </div>
         </div>
 
-        <btn type="primary" @click="openNewField()">Add Custom Field</btn>
+        <btn type="primary" @click="openNewField()">{{ $t('message.addField') }}</btn>
 
         <modal v-model="modalAddField" title="Add Field" ref="modal" id="modal-demo" ok-text="Save" :backdrop="true"
                :dismiss-btn="true"
                :keyboard="true"
                cancel-text="Close">
             <div class="row" style="padding-left: 30px !important;">
-                <alert type="warning" v-if="duplicate"><b>Warning!</b> Field already exists.</alert>
+                <alert type="warning" v-if="duplicate"><b>Warning!</b> {{ $t('message.duplicated') }}.</alert>
 
 
                 <div class="col-md-10">
-                    <div class="form-horizontal"  v-if="useOptions">
-                        <div :class="['form-group']" v-if="useOptions">
-                            <label>Select a Field</label>
+                    <div class="form"  v-if="useOptions">
+                        <div :class="['form-group']">
+                            <label class="col-md-4">{{ $t('message.select') }}</label>
+                            <div class="col-md-8">
+                                <select v-model="newField" :class="['form-control']">
+                                    <option v-for="option in customOptions" v-bind:value="option.value" :key="option.value">
+                                        {{ option.text }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
 
-                            <select v-model="newField" :class="['form-control']">
-                                <option v-for="option in customOptions" v-bind:value="option.value" :key="option.value">
-                                    {{ option.text }}
-                                </option>
-                            </select>
+                        <div :class="['form-group']" >
+                            <label class="col-md-4">{{ $t('message.description') }}</label>
+                            <div class="col-md-8">
+                                <input type="text" v-model="newFieldDescription" :class="['form-control']">
+                                <div class="help-block">{{ $t('message.empty') }}</div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="form" v-if="!useOptions">
                         <div :class="['form-group']">
-                            <label class="col-md-4">Field Label</label>
+                            <label class="col-md-4">{{ $t('message.fieldLabel') }}</label>
                             <div class="col-md-8">
                                 <input type="text" v-model="newLabelField" :class="['form-control']">
                             </div>
                         </div>
                         <div :class="['form-group']" >
-                            <label class="col-md-4">Field Key</label>
+                            <label class="col-md-4">{{ $t('message.fieldKey') }}</label>
                             <div class="col-md-8">
                                 <input type="text" v-model="newField" :class="['form-control']">
+                            </div>
+                        </div>
+
+                        <div :class="['form-group']" >
+                            <label class="col-md-4">{{ $t('message.description') }}</label>
+                            <div class="col-md-8">
+                                <input type="text" v-model="newFieldDescription" :class="['form-control']">
+                                <div class="help-block">{{ $t('message.empty') }}</div>
+
                             </div>
                         </div>
                     </div>
@@ -60,11 +81,11 @@
 
             <div slot="footer">
                 <button type="button" class="btn btn-primary reset_page_confirm" @click="modalAddField=false">
-                    Cancel
+                    {{ $t('message.cancel') }}
                 </button>
 
                 <button type="button" class="btn btn-primary reset_page_confirm" @click="addField()">
-                    Add
+                    {{ $t('message.add') }}
                 </button>
             </div>
 
@@ -83,6 +104,7 @@
         @Prop({required:false}) readonly options!: string
         @Prop({required:true}) readonly element!: string
         @Prop({required:true}) readonly hasOptions!: string
+        @Prop({required:true}) readonly name!: string
 
         customFields:  any[] = []
         customOptions:  any[] = []
@@ -92,6 +114,7 @@
         duplicate = false
         newField: string = ''
         newLabelField: string = ''
+        newFieldDescription: string = ''
 
         openNewField() {
             this.modalAddField =true;
@@ -103,12 +126,26 @@
             if(this.useOptions){
                 this.customOptions.forEach((option: any) => {
                     if (option.value === this.newField) {
-                        field = {key: option.value, label: option.text, value: '' } ;
+                        let description = this.newFieldDescription;
+                        if(description == ''){
+                            description = 'Field key ' + option.value
+                        }else{
+                            description = description + ' (Field key: ' + option.value + ')';
+                        }
+
+                        field = {key: option.value, label: option.text, desc: description } ;
                     }
                 });
 
             }else{
-                field = {key: this.newField, label: this.newLabelField, value: '' }
+                let description = this.newFieldDescription;
+                if(description == ''){
+                    description = 'Field key ' + this.newField
+                }else{
+                    description = description + ' (Field key: ' + this.newField + ')';
+                }
+
+                field = {key: this.newField, label: this.newLabelField, value: '', desc: description}
             }
 
             let exists = false;
@@ -165,6 +202,9 @@
                 if(customFieldsObject != null){
                     const fields = Object.keys(customFieldsObject).map((key: any) => {
                         const value = customFieldsObject[key];
+                        if (value.desc == null){
+                            value.desc = 'Field key: ' + value.key
+                        }
                         return value;
                     });
                     this.customFields = fields;

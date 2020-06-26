@@ -482,8 +482,13 @@ class ScheduledExecutionControllerTests extends HibernateSpec implements Control
             }
             def nServiceControl = new MockFor(NotificationService, true)
             nServiceControl.demand.listNotificationPlugins { []}
+            nServiceControl.demand.listNotificationPluginsDynamicProperties {proj, plugin -> []}
+
             sec.notificationService = nServiceControl.proxyInstance()
 
+            sec.rundeckAuthorizedServicesProvider=mockWith(AuthorizedServicesProvider){
+                getServicesWith{authContext-> return null }
+            }
 			def oServiceControl = new MockFor(OrchestratorPluginService, true)
 			oServiceControl.demand.listDescriptions{[]}
 			sec.orchestratorPluginService = oServiceControl.proxyInstance()
@@ -554,7 +559,13 @@ class ScheduledExecutionControllerTests extends HibernateSpec implements Control
 
             def nServiceControl = new MockFor(NotificationService, true)
             nServiceControl.demand.listNotificationPlugins { [] }
+            nServiceControl.demand.listNotificationPluginsDynamicProperties {proj, plugin -> []}
             sec.notificationService = nServiceControl.proxyInstance()
+
+            sec.rundeckAuthorizedServicesProvider=mockWith(AuthorizedServicesProvider){
+                getServicesWith{authContext-> return null }
+            }
+
 
 			def oServiceControl = new MockFor(OrchestratorPluginService, true)
 			oServiceControl.demand.listDescriptions{[]}
@@ -2033,7 +2044,13 @@ class ScheduledExecutionControllerTests extends HibernateSpec implements Control
             pControl.demand.listNotificationPlugins() {->
                 []
             }
+            pControl.demand.listNotificationPluginsDynamicProperties {proj, plugin -> []}
             sec.notificationService = pControl.proxyInstance()
+
+            sec.rundeckAuthorizedServicesProvider=mockWith(AuthorizedServicesProvider){
+                getServicesWith{authContext-> return null }
+            }
+        
             sec.pluginService = mockWith(PluginService){
                 listPlugins(){[]}
             }

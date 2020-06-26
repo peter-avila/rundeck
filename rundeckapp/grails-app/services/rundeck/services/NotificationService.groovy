@@ -130,6 +130,8 @@ public class NotificationService implements ApplicationContextAware{
             )
             if(dynamicProperties){
                 result.put(name, dynamicProperties)
+            }else{
+                result.put(name, [:])
             }
         }
         return result

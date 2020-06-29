@@ -180,15 +180,19 @@ class PluginTagLib {
         if(attrs.json){
             def json = attrs.json
             def jsonSlurper = new JsonSlurper()
-            def fields = jsonSlurper.parseText(json)
-            out << '<hr/>'
-            fields.each{field->
-                out << '<span class="configpair">'
-                out << '<span title="">'+field.label+': </span>'
-                out << '<span class="text-success">'+field.value+'</span>'
-                out << '</span>'
+            try{
+                def fields = jsonSlurper.parseText(json)
+                out << '<div class="customattributes"></div>'
+                fields.each{field->
+                    out << '<span class="configpair">'
+                    out << '<span title="">'+field.label.encodeAsSanitizedHTML()+': </span>'
+                    out << '<span class="text-success">'+field.value.encodeAsSanitizedHTML()+'</span>'
+                    out << '</span>'
+                }
+                out << ''
+            }catch(Exception e){
+                log.warn(e.message)
             }
-            out << ''
         }
     }
 }

@@ -137,8 +137,8 @@
     <g:hiddenField id="${fieldid}" name="${fieldname}" value="${valueText}" />
 
     <div id="dynamic-form-vue-${fieldid}" class="dynamic-form-vue" fields="${valueText}" hasOptions="${hasDynamicProperties}"
-         options="${hasDynamicProperties? dynamicProperties.encodeAsJSON(): null}"
-         element="${fieldid}" name="${fieldname}"></div>
+         options="${hasDynamicProperties?enc(json:dynamicProperties): null}"
+         element="${enc(attr:fieldid)}" name="${enc(attr:fieldname)}"></div>
 </g:elseif>
 <g:elseif test="${prop.type.toString()=='Select' || prop.type.toString()=='FreeSelect'}">
     <g:set var="fieldid" value="${g.rkey()}"/>

@@ -35,11 +35,12 @@
                         <div :class="['form-group']">
                             <label class="col-md-4">{{ $t('message.select') }}</label>
                             <div class="col-md-8">
-                                <select v-model="newField" :class="['form-control']">
-                                    <option v-for="option in customOptions" v-bind:value="option.value" :key="option.value">
-                                        {{ option.text }}
-                                    </option>
-                                </select>
+                                <multi-select v-model="selectedField" :options="customOptions" filterable  
+                                :limit="1"
+                                block
+                                :placeholder="$t('message.select' )"
+                                :filter-placeholder="$t('message.fieldFilter' )"
+                                />
                             </div>
                         </div>
 
@@ -115,17 +116,23 @@
         newField: string = ''
         newLabelField: string = ''
         newFieldDescription: string = ''
+        selectedField: any[] = []
 
         openNewField() {
             this.modalAddField =true;
         }
+
         addField() {
             let field = {} as any;
             this.duplicate = false;
 
             if(this.useOptions){
-                this.customOptions.forEach((option: any) => {
-                    if (option.value === this.newField) {
+
+                if(this.selectedField != null){
+
+                    const newField = this.selectedField[0];
+                    this.customOptions.forEach((option: any) => {
+                    if (option.value === newField) {
                         let description = this.newFieldDescription;
                         if(description == ''){
                             description = 'Field key ' + option.value
@@ -133,11 +140,11 @@
                             description = description + ' (Field key: ' + option.value + ')';
                         }
 
-                        field = {key: option.value, label: option.text, desc: description } ;
+                        field = {key: option.value, label: option.label, desc: description } ;
                     }
-                });
-
-            }else{
+                    });
+                }
+            }else {
                 let description = this.newFieldDescription;
                 if(description == ''){
                     description = 'Field key ' + this.newField
@@ -215,7 +222,7 @@
                 const optionsObject =  JSON.parse(this.options);
                 const options = Object.keys(optionsObject).map((key: any) => {
                     const data = optionsObject[key];
-                    return {value: key, text: data};
+                    return {value: key, label: data};
                 });
                 this.customOptions = options;
             }

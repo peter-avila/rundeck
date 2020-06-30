@@ -47,9 +47,7 @@ const els = document.body.getElementsByClassName('dynamic-form-vue')
 
 for (var i = 0; i < els.length; i++) {
   const el = els[i];
-  // partial fix for conflict between vue and prototype 1.7.0
-  Array.prototype.filter = window.filter
-
+  
   /* eslint-disable no-new */
   new Vue({
     el: el,

@@ -1933,6 +1933,11 @@ class ScheduledExecutionController  extends ControllerBase{
                 !pluginControlService?.isDisabledPlugin(k, 'Notification')
             }
 
+            def notificationPluginsDynamicProperties = notificationService.listNotificationPluginsDynamicProperties(params.project,
+                    rundeckAuthorizedServicesProvider.getServicesWith(authContext)).findAll{k,v->
+                !pluginControlService?.isDisabledPlugin(k,'Notification')
+            }
+
             def executionLifecyclePlugins = executionLifecyclePluginService.listEnabledExecutionLifecyclePlugins(pluginControlService)
 
             def globals = frameworkService.getProjectGlobals(scheduledExecution.project).keySet()
@@ -1950,6 +1955,7 @@ class ScheduledExecutionController  extends ControllerBase{
                                           stepDescriptions          : stepTypes,
                                           strategyPlugins           : strategyPlugins,
                                           notificationPlugins       : notificationPlugins,
+                                          notificationPluginsDynamicProperties: notificationPluginsDynamicProperties,
                                           orchestratorPlugins       : orchestratorPluginService.listDescriptions(),
                                           params                    : params,
                                           globalVars                : globals,
